@@ -1,6 +1,5 @@
 apikey.txt
-<<<<<<< Updated upstream
 .venv
-=======
 genaivenv
->>>>>>> Stashed changes
+credentials.json
+token.json
