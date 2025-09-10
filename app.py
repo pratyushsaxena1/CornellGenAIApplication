@@ -6,6 +6,7 @@ from testLLM import write_llm_prompt, get_llm_response
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import datetime
+import ast
 
 app = Flask(__name__)
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
