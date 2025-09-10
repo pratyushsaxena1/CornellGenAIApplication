@@ -1,9 +1,10 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import datetime
 import sys
 import os
+import ast
 sys.path.append(os.path.join(os.path.dirname(__file__), 'static', 'py'))
 from testLLM import write_llm_prompt, get_llm_response
 
@@ -13,6 +14,10 @@ SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/form')
+def form():
+    return render_template('eventDetailsForm.html')
 
 @app.route('/runLLM', methods=["GET", "POST"])
 def runLLM():
