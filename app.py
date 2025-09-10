@@ -6,6 +6,7 @@ import sys
 import ast
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'static', 'py'))
+from testLLM import write_llm_prompt, get_llm_response
 
 
 app = Flask(__name__)
@@ -38,9 +39,12 @@ def runLLM():
             llm_response = ast.literal_eval(llm_response)
             meeting_time_unparsed = llm_response['meeting time']
             num_of_mins_unparsed = llm_response['duration']
+            time_period_unparsed = int(llm_response['time period'])
             splitted = meeting_time_unparsed.split("T")
             date_unparsed = splitted[0]
             time_unparsed = splitted[1]
+            #time_period_unparsed = int(splitted[2])
+            print("time period:", time_period_unparsed)
             splitted_date = date_unparsed.split("-")
             year,month,date = int(splitted_date[0]), int(splitted_date[1]), int(splitted_date[2])
 
