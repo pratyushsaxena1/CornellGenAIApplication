@@ -34,17 +34,17 @@ def runLLM():
             new_filename = write_llm_prompt(event_title, other_person_email, time_period, duration, location,other_info)
             llm_response = get_llm_response(new_filename)
             if llm_response == "UNAVAILABLE":
-                return "hello!"
+                return "No time available!"
             #return llm_response
             llm_response = ast.literal_eval(llm_response)
             meeting_time_unparsed = llm_response['meeting time']
             num_of_mins_unparsed = llm_response['duration']
-            time_period_unparsed = int(llm_response['time period'])
+            #time_period_unparsed = int(llm_response['time period'])
             splitted = meeting_time_unparsed.split("T")
             date_unparsed = splitted[0]
             time_unparsed = splitted[1]
             #time_period_unparsed = int(splitted[2])
-            print("time period: next", time_period_unparsed,"hours")
+            #print("time period: next", time_period_unparsed,"hours")
             splitted_date = date_unparsed.split("-")
             year,month,date = int(splitted_date[0]), int(splitted_date[1]), int(splitted_date[2])
 
