@@ -24,7 +24,7 @@ label {
 }
 
 input[type=text]{
-    width: 25vw;
+    width: 40vw;
     text-align: center;
     padding: 0.8vw 1.4vw;
     font-size: 1vw;
@@ -36,15 +36,20 @@ input[type=text]{
 }
 
 input[type=submit]{
-    width: 45vw;
-    height: 10vw;
+    width: 40vw;
     text-align: center;
+    padding: 0.8vw 1.4vw;
+    font-size: 1.5vw;
+    display: inline-block;
+    border: 0.2vw solid #ccc;
     background-color: black;
     color: white;
-    padding: 1.5vw;
-    margin: 5vw 0;
-    border: 0.6vw solid white;
-    border-radius: 0.5vw;
+    border-radius: 0.2vw;
+    box-sizing: border-box;
+}
+
+input[type=submit]:hover {
     cursor: pointer;
-    font-size: 4vw;
+    background-color: rgb(56, 55, 55);
+    color: rgb(189, 186, 186);
 }
