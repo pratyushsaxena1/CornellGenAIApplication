@@ -1,10 +1,6 @@
 from flask import Flask, render_template, request
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-import datetime
 import sys
 import os
-import ast
 sys.path.append(os.path.join(os.path.dirname(__file__), 'static', 'py'))
 from testLLM import write_llm_prompt, get_llm_response
 
