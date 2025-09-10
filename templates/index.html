@@ -3,28 +3,14 @@
 <head>
     <link rel="stylesheet" href="/static/css/homepage_style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Login</title>
 </head>
 <body>
-
-<h2>Google Calendar Meetup Planner</h2>
-
-<div id = "form_div">
-    <form id = "main_form" method="POST" action="/runLLM">
-    <label for="event_title">Event Name</label><br>
-    <input type="text" id="event_title" name="event_title" placeholder="What do you want to do? (e.g. watch a movie, etc.)"><br>
-    <label for="other_person_email">Event Collaborator’s Email</label><br>
-    <input type="text" id="other_person_email" name="other_person_email" placeholder="What is the email of the event collaborator? (e.g. johnsmith@gmail.com, etc.)"><br>
-    <label for="time_period">Time Period</label><br>
-    <input type="text" id="time_period" name="time_period" placeholder="What time period would you like to meet with them? (e.g. in the next 3 days, etc.)"><br>
-    <label for="duration">Duration</label><br>
-    <input type="text" id="duration" name="duration" placeholder="How long would you like to meet with them? (e.g. 30 minutes, 1 hour, etc.)"><br>
-    <label for="location">Location</label><br>
-    <input type="text" id="location" name="location" placeholder="Where do you want to meet? (e.g. XYZ Street, etc.)"><br>
-    <label for="other_info">Other Information</label><br>
-    <input type="text" id="other_info" name="other_info" placeholder="Any other information you want to add? (e.g. reminder to bring water, etc.)"><br><br>
-    <input type="submit" value="Submit">
-    </form> 
+<h2>Log in with Google</h2>
+<div id="form_div">
+    <form method="GET" action="/connect_google">
+        <input type="submit" value="Login with Google">
+    </form>
 </div>
-
 </body>
 </html>
