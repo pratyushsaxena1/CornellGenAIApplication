@@ -1,0 +1,50 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+}
+
+h2 {
+    text-align: center;
+    font-size: 3em;
+}
+
+#form_div {
+    text-align: center;
+}
+
+#mainform {
+    text-align: center;
+}
+
+label {
+    font-size: 1.5vw;
+    color: white;
+    text-align: center;
+}
+
+input[type=text]{
+    width: 25vw;
+    text-align: center;
+    padding: 0.8vw 1.4vw;
+    font-size: 1vw;
+    margin: 1vw;
+    display: inline-block;
+    border: 0.2vw solid #ccc;
+    border-radius: 0.2vw;
+    box-sizing: border-box;
+}
+
+input[type=submit]{
+    width: 45vw;
+    height: 10vw;
+    text-align: center;
+    background-color: black;
+    color: white;
+    padding: 1.5vw;
+    margin: 5vw 0;
+    border: 0.6vw solid white;
+    border-radius: 0.5vw;
+    cursor: pointer;
+    font-size: 4vw;
+}
