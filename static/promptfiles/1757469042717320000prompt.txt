@@ -16,8 +16,8 @@ USER INPUTS:
 Thing to do: play basketball
 Person to meet with: pratyushsaxena4@gmail.com
 Time period: today
-Duration: 2 hours
-Additional information: meet at rpcc courts
+Duration: 1 hour
+Additional information: rpcc courts
 
 
 

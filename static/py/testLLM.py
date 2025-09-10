@@ -1,6 +1,16 @@
 import time
 import shutil
 import json
+from google import genai
+
+# from flask import request
+
+
+# if request.method == "POST":
+#     event_title = request.form.get("event_title")    
+#     print(event_title)
+
+
 
 sample_calendars = {
     "anmolkaranva@gmail.com": "Busy from 9:00am-10:30am, 1:00pm-2:00pm.",
@@ -23,7 +33,7 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, m
     current_time_nanoseconds = get_current_time_nanoseconds()
     
     source_file = "static/py/promptfile.txt"
-    new_filename = "static/py/" + current_time_nanoseconds + "prompt.txt"
+    new_filename = "static/promptfiles/" + current_time_nanoseconds + "prompt.txt"
     shutil.copy2(source_file, new_filename)
     
     with open(new_filename, "a") as f:
@@ -36,7 +46,7 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, m
         f.write(f"Time period: {time_period}\n")
         f.write(f"Duration: {duration}\n")
         f.write(f"Additional information: {misc}\n")
-        f.write("\n\n\nIf you find a valid time slot that meets all constraints, respond ONLY with the start time in the exact format: YYYY-MM-DDTHH:MM:SS.")
+        f.write("\n\n\nIf you find a valid time slot that meets all constraints, respond ONLY with the start time in the exact format: {'meeting time':'YYYY-MM-DDTHH:MM:SS','duration': 'NUMBEROFMINUTES'}. Every key and value should be a string, even if it is a number.")
         f.write("\nDo not include any other words, explanations, or introductory phrases like /'Here is a good time:/'")
         f.write("\nIf, after analyzing the calendars and constraints, you determine that no common time slot is available, respond ONLY with the word UNAVAILABLE.")
     f.close()
@@ -47,9 +57,20 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, m
 
 
 def get_llm_response(new_filename):
+    with open("static/py/apikey.txt", "r") as f:
+        api_key = f.read().strip()
+    
     with open(new_filename, "r") as f:
         prompt = f.read()
     
+    client = genai.Client(api_key=api_key)
+    response = client.models.generate_content(
+        model="gemini-2.5-flash", contents=prompt
+    )
+    print(response.text)
+
+    # print(f"API Key loaded: {api_key[:5]}...")  
+    # print(f"Prompt loaded from: {new_filename}")
     
     #return prompt
 
