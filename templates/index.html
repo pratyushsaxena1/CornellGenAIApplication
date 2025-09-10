@@ -9,7 +9,7 @@
 <h2>Google Calendar Meetup Planner</h2>
 
 <div id = "form_div">
-    <form id = "main_form" method="POST">
+    <form id = "main_form" method="POST" action="/runLLM">
     <label for="event_title">Event Name</label><br>
     <input type="text" id="event_title" name="event_title" placeholder="What do you want to do? (e.g. watch a movie, etc.)"><br>
     <label for="other_person_email">Event Collaborator’s Email</label><br>
@@ -18,8 +18,8 @@
     <input type="text" id="time_period" name="time_period" placeholder="What time period would you like to meet with them? (e.g. in the next 3 days, etc.)"><br>
     <label for="duration">Duration</label><br>
     <input type="text" id="duration" name="duration" placeholder="How long would you like to meet with them? (e.g. 30 minutes, 1 hour, etc.)"><br>
-    <label for="duration">Location</label><br>
-    <input type="text" id="duration" name="duration" placeholder="Where do you want to meet? (e.g. XYZ Street, etc.)"><br>
+    <label for="location">Location</label><br>
+    <input type="text" id="location" name="location" placeholder="Where do you want to meet? (e.g. XYZ Street, etc.)"><br>
     <label for="other_info">Other Information</label><br>
     <input type="text" id="other_info" name="other_info" placeholder="Any other information you want to add? (e.g. reminder to bring water, etc.)"><br><br>
     <input type="submit" value="Submit">
