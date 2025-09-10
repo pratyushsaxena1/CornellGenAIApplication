@@ -23,8 +23,19 @@ def runLLM():
         try:
             new_filename = write_llm_prompt(event_title, other_person_email, time_period, duration, location,other_info)
             llm_response = get_llm_response(new_filename)
-            
-            return f"Success! LLM Response: {llm_response}"
+            if llm_response == "UNAVAILABLE":
+                return "hello!"
+            return llm_response
+            meeting_time_unparsed = llm_response['meeting time']
+            num_of_mins_unparsed = llm_response['duration']
+            splitted = meeting_time_unparsed.split("T")
+            date_unparsed = splitted[0]
+            time_unparsed = splitted[1]
+            splitted_date = date_unparsed.split("-")
+            year,month,date = int(splitted_date[0]), int(splitted_date[1]), int(splitted_date[2])
+
+
+            return f"Success! Your meeting time is on {month}/{date}/{year} at {time_unparsed}"
         except Exception as e:
             return f"Error: {str(e)}"
     
