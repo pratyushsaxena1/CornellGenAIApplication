@@ -14,4 +14,5 @@ def get_user_inputs():
 
 def write_llm_prompt():
     thing_to_do, person_to_meet_with, time_period, duration, misc = get_user_inputs()
-
+    
+    f = open("")
