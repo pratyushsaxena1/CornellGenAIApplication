@@ -5,8 +5,8 @@ import datetime
 import sys
 import ast
 import os
-from testLLM import write_llm_prompt, get_llm_response
 sys.path.append(os.path.join(os.path.dirname(__file__), 'static', 'py'))
+
 
 app = Flask(__name__)
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
