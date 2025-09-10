@@ -12,10 +12,6 @@ from google import genai
 
 
 
-sample_calendars = {
-    "anmolkaranva@gmail.com": "Busy from 9:00am-10:30am, 1:00pm-2:00pm.",
-    "pratyushsaxena4@gmail.com": "Busy from 10:00am-12:00pm, 2:30pm-3:30pm."
-}
 
 def get_user_inputs():
     thing_to_do = input("What do you want to do? (e.g. meet with someone, etc.)")
@@ -28,14 +24,18 @@ def get_user_inputs():
 def get_current_time_nanoseconds():
     return str(time.time_ns())
 
-def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, misc):
+def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration,location, misc):
     
     current_time_nanoseconds = get_current_time_nanoseconds()
     
     source_file = "static/py/promptfile.txt"
     new_filename = "static/promptfiles/" + current_time_nanoseconds + "prompt.txt"
     shutil.copy2(source_file, new_filename)
-    
+
+    sample_calendars = {
+        "anmolkaranva@gmail.com": "Busy from 9:00am-10:30am, 1:00pm-2:00pm.",
+        "pratyushsaxena4@gmail.com": "Busy from 10:00am-12:00pm, 2:30pm-3:30pm."
+    }
     with open(new_filename, "a") as f:
         f.write(f"\n\nCALENDAR DATA:\n")
         f.write(json.dumps(sample_calendars, indent=2))
@@ -45,6 +45,7 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, m
         f.write(f"Person to meet with: {person_to_meet_with}\n")
         f.write(f"Time period: {time_period}\n")
         f.write(f"Duration: {duration}\n")
+        f.write(f"Location: {location}\n")
         f.write(f"Additional information: {misc}\n")
         f.write("\n\n\nIf you find a valid time slot that meets all constraints, respond ONLY with the start time in the exact format: {'meeting time':'YYYY-MM-DDTHH:MM:SS','duration': 'NUMBEROFMINUTES'}. Every key and value should be a string, even if it is a number.")
         f.write("\nDo not include any other words, explanations, or introductory phrases like /'Here is a good time:/'")
@@ -67,7 +68,7 @@ def get_llm_response(new_filename):
     response = client.models.generate_content(
         model="gemini-2.5-flash", contents=prompt
     )
-    print(response.text)
+    return (response.text)
 
     # print(f"API Key loaded: {api_key[:5]}...")  
     # print(f"Prompt loaded from: {new_filename}")
