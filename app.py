@@ -44,7 +44,7 @@ def runLLM():
             date_unparsed = splitted[0]
             time_unparsed = splitted[1]
             #time_period_unparsed = int(splitted[2])
-            print("time period:", time_period_unparsed)
+            print("time period: next", time_period_unparsed,"hours")
             splitted_date = date_unparsed.split("-")
             year,month,date = int(splitted_date[0]), int(splitted_date[1]), int(splitted_date[2])
 
@@ -82,7 +82,8 @@ def connect_google():
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             print(start, event.get('summary', 'No Title'))
-    return "Events have been printed in the terminal!"
+    result = form()
+    return result
 
 if __name__ == '__main__':
     app.run(debug=True)
