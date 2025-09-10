@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import sys
 import os
+import ast
 sys.path.append(os.path.join(os.path.dirname(__file__), 'static', 'py'))
 from testLLM import write_llm_prompt, get_llm_response
 
@@ -25,7 +26,8 @@ def runLLM():
             llm_response = get_llm_response(new_filename)
             if llm_response == "UNAVAILABLE":
                 return "hello!"
-            return llm_response
+            #return llm_response
+            llm_response = ast.literal_eval(llm_response)
             meeting_time_unparsed = llm_response['meeting time']
             num_of_mins_unparsed = llm_response['duration']
             splitted = meeting_time_unparsed.split("T")
