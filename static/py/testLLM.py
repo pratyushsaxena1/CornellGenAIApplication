@@ -51,22 +51,19 @@ def get_llm_response(new_filename):
     with open(new_filename, "r") as f:
         prompt = f.read()
     
+    
+    #return prompt
 
 
 def main():
    
-    
-    
+
     thing_to_do, person_to_meet_with, time_period, duration, misc = get_user_inputs()
 
     new_filename = write_llm_prompt(thing_to_do, person_to_meet_with, time_period, duration, misc)
     
     llm_response = get_llm_response(new_filename)
-    print(f"\nPrompt file created: {new_filename}")
-    print("\nPrompt content:")
-    print("-" * 50)
-    print(llm_response)
-    print("-" * 50)
+    
 
 
 if __name__ == "__main__":

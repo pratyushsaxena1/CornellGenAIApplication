@@ -21,6 +21,6 @@ Additional information: meet at rpcc courts
 
 
 
-If you find a valid time slot that meets all constraints, respond ONLY with the start time in the exact format: YYYY-MM-DDTHH:MM:SS.
+If you find a valid time slot that meets all constraints, respond ONLY with the start time in the exact format: {'meeting time':'YYYY-MM-DDTHH:MM:SS','duration': 'NUMBEROFMINUTES'}. Every key and value should be a string, even if it is a number.
 Do not include any other words, explanations, or introductory phrases like /'Here is a good time:/'
 If, after analyzing the calendars and constraints, you determine that no common time slot is available, respond ONLY with the word UNAVAILABLE.
