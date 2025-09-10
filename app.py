@@ -1,11 +1,14 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+import datetime
 import sys
 import os
-import ast
 sys.path.append(os.path.join(os.path.dirname(__file__), 'static', 'py'))
 from testLLM import write_llm_prompt, get_llm_response
 
 app = Flask(__name__)
+SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 @app.route('/')
 def index():
@@ -43,5 +46,34 @@ def runLLM():
     
     return "Please submit the form to run the LLM"
 
+@app.route('/connect_google')
+def connect_google():
+    if request.method == "POST":
+        time_period = request.form.get("time_period")
+        duration = request.form.get("duration")
+    flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+    creds = flow.run_local_server(port=0)
+    service = build('calendar', 'v3', credentials=creds)
+    now = datetime.datetime.utcnow()
+    time_min = now.isoformat() + 'Z'
+    time_max = (now + datetime.timedelta(days=2)).isoformat() + 'Z'
+    events_result = service.events().list(
+        calendarId='primary',
+        timeMin=time_min,
+        timeMax=time_max,
+        singleEvents=True,
+        orderBy='startTime',
+        maxResults=50
+    ).execute()
+    events = events_result.get('items', [])
+    if not events:
+        print("No upcoming events in the next 2 days.")
+    else:
+        print("Upcoming events in the next 2 days:")
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            print(start, event.get('summary', 'No Title'))
+    return "Events have been printed in the terminal!"
+
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(debug=True)
