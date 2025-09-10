@@ -73,7 +73,7 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration,lo
         f.write("\nDo not include any other words, explanations, or introductory phrases like /'Here is a good time:/'")
         f.write("\nIf, after analyzing the calendars and constraints, you determine that no common time slot is available, respond ONLY with the word UNAVAILABLE.")
    
-        #f.write(f"The current time is {currTime} (UTC). When you return the time period in number of hours, consider eastern time rather than UTC. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ")
+        f.write(f"The current time is {currTime} (UTC).")# When you return the time period in number of hours, consider eastern time rather than UTC. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ")
         #f.write("Remember that the meeting time is not the current time. The meeting time is the time I would like you to schedule the meeting for. the current time is solely used for helping you calculate time period.")
 
         f.write("Leave at least a 15-minute buffer before and after other events so that people can easily get from one event to this scheduled event.")
