@@ -7,7 +7,6 @@ sample_calendars = {
     "pratyushsaxena4@gmail.com": "Busy from 10:00am-12:00pm, 2:30pm-3:30pm."
 }
 
-
 def get_user_inputs():
     thing_to_do = input("What do you want to do? (e.g. meet with someone, etc.)")
     person_to_meet_with = input("Enter the email of the person you want to meet with: ")
