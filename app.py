@@ -5,12 +5,8 @@ import datetime
 import sys
 import ast
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), 'static', 'py'))
 from testLLM import write_llm_prompt, get_llm_response
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-import datetime
-import ast
+sys.path.append(os.path.join(os.path.dirname(__file__), 'static', 'py'))
 
 app = Flask(__name__)
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
