@@ -2,6 +2,7 @@ import time
 import shutil
 import json
 import datetime
+import sqlite3
 from google import genai
 # from flask import request
 
@@ -24,10 +25,36 @@ def get_user_inputs():
 def get_current_time_nanoseconds():
     return str(time.time_ns())
 
-def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration,location, misc):
+def get_calendar_data_from_db(person_to_meet_with):
+    """Get calendar data from database for the specified person"""
+    conn = sqlite3.connect('calendar_data.db')
+    cursor = conn.cursor()
     
+    # Get events for the person
+    cursor.execute('''
+        SELECT summary, start_time, end_time 
+        FROM events 
+        WHERE user_email = ?
+        ORDER BY start_time
+    ''', (person_to_meet_with,))
     
+    events = cursor.fetchall()
+    conn.close()
+    
+    if not events:
+        return f"No calendar data found for {person_to_meet_with}"
+    
+    # Format events as busy times
+    busy_times = []
+    for summary, start_time, end_time in events:
+        busy_times.append(f"Busy from {start_time} to {end_time} - {summary}")
+    
+    return f"{person_to_meet_with}: " + "; ".join(busy_times)
 
+def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, location, misc, current_user_email=None):
+    
+    
+ 
     #google gemini first call to get the time period so we can give it to google calendar
     with open("static/py/apikey.txt", "r") as f:
         currTime = datetime.datetime.utcnow()
@@ -46,10 +73,16 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration,lo
     new_filename = "static/promptfiles/" + current_time_nanoseconds + "prompt.txt"
     shutil.copy2(source_file, new_filename)
 
-    sample_calendars = {
-        "anmolkaranva@gmail.com": "Busy from 9:00am-10:30am, 1:00pm-2:00pm.",
-        "pratyushsaxena4@gmail.com": "Busy from 10:00am-12:00pm, 2:30pm-3:30pm."
-    }
+    # Get calendar data for both the current user and the person to meet with
+    other_person_calendar = get_calendar_data_from_db(person_to_meet_with)
+    
+    # Get current user's calendar if email is provided
+    current_user_calendar = ""
+    if current_user_email:
+        current_user_calendar = get_calendar_data_from_db(current_user_email)
+    
+    # Combine both calendars
+    calendar_data = f"{other_person_calendar}\n\n{current_user_calendar}" if current_user_calendar else other_person_calendar
 
 
 
@@ -57,12 +90,12 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration,lo
         
         f.write("\n\n")
         f.write(f"\n\nCALENDAR DATA:\n")
-        f.write(json.dumps(sample_calendars, indent=2))
+        f.write(calendar_data)
         
         f.write(f"\n\nUSER INPUTS:\n")
         f.write(f"Thing to do: {thing_to_do}\n")
         f.write(f"Person to meet with: {person_to_meet_with}\n")
-        f.write(f"Time period: {time_period}\n")
+        f.write(f"Time period (in what time period the meeting has to take place): {time_period}\n")
         f.write(f"Duration: {duration}\n")
         f.write(f"Location: {location}\n")
         f.write(f"Additional information: {misc}\n")
