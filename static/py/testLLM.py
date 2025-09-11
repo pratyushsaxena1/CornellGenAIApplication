@@ -30,7 +30,6 @@ def get_calendar_data_from_db(person_to_meet_with):
     conn = sqlite3.connect('calendar_data.db')
     cursor = conn.cursor()
     
-    # Get events for the person
     cursor.execute('''
         SELECT summary, start_time, end_time 
         FROM events 
@@ -44,7 +43,6 @@ def get_calendar_data_from_db(person_to_meet_with):
     if not events:
         return f"No calendar data found for {person_to_meet_with}"
     
-    # Format events as busy times
     busy_times = []
     for summary, start_time, end_time in events:
         busy_times.append(f"Busy from {start_time} to {end_time} - {summary}")
@@ -73,15 +71,12 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
     new_filename = "static/promptfiles/" + current_time_nanoseconds + "prompt.txt"
     shutil.copy2(source_file, new_filename)
 
-    # Get calendar data for both the current user and the person to meet with
     other_person_calendar = get_calendar_data_from_db(person_to_meet_with)
     
-    # Get current user's calendar if email is provided
     current_user_calendar = ""
     if current_user_email:
         current_user_calendar = get_calendar_data_from_db(current_user_email)
     
-    # Combine both calendars
     calendar_data = f"{other_person_calendar}\n\n{current_user_calendar}" if current_user_calendar else other_person_calendar
 
 

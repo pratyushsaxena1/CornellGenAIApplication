@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials # <-- ADDED THIS IMPORT
+from google.oauth2.credentials import Credentials
 import datetime
 import sys
 import ast
@@ -9,22 +9,19 @@ import os
 import sqlite3
 import json
 
-# Assuming testLLM.py is in the specified path
-# Make sure this path is correct for your project structure
+
 sys.path.append(os.path.join(os.path.dirname(__file__), 'static', 'py'))
 from testLLM import write_llm_prompt, get_llm_response
 
 
 app = Flask(__name__)
-app.secret_key = 'mol_and_prat_goat'  # Change this to a random secret key
+app.secret_key = 'mol_and_prat_goat'  
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly','https://www.googleapis.com/auth/calendar.events']
 
-# Database initialization
 def init_db():
     conn = sqlite3.connect('calendar_data.db')
     cursor = conn.cursor()
     
-    # Create users table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +30,6 @@ def init_db():
         )
     ''')
     
-    # Create events table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,10 +45,8 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Initialize database on startup
 init_db()
 
-# Helper function to convert credentials to a dictionary for session storage
 def credentials_to_dict(credentials):
     return {
         'token': credentials.token,
@@ -69,15 +63,12 @@ def index():
 
 @app.route('/form')
 def form():
-    # --- FIX: Protect this route ---
-    # If user's credentials aren't in the session, redirect to the homepage.
     if 'credentials' not in session:
         return redirect(url_for('index'))
     return render_template('eventDetailsForm.html')
 
 @app.route('/runLLM', methods=["GET", "POST"])
 def runLLM():
-    # --- FIX: Protect this route ---
     if 'credentials' not in session:
         return redirect(url_for('index'))
 
@@ -90,7 +81,6 @@ def runLLM():
         other_info = request.form.get("other_info")
         
         try:
-            # --- FIX: Reliably get email from session ---
             current_user_email = session.get('current_user_email')
             if not current_user_email:
                 return "Error: User email not found in session. Please reconnect your Google Account."
@@ -108,19 +98,18 @@ def runLLM():
             start_dt = datetime.datetime.fromisoformat(meeting_time_str)
             end_dt = start_dt + datetime.timedelta(minutes=duration_mins)
 
-            # --- FIX: Rebuild credentials from session data ---
             creds = Credentials(**session['credentials'])
             
             event_result = create_event(
-                creds=creds, # Pass the credentials to the function
+                creds=creds, 
                 summary=event_title,
                 start_datetime=start_dt.isoformat(),
                 end_datetime=end_dt.isoformat(),
                 location=location,
-                attendees=[other_person_email]
+                attendees=[other_person_email],
+                description=other_info
             )
             
-            # Parsing for the success message
             time_unparsed = start_dt.strftime('%-I:%M %p') # e.g., 9:30 AM
             month, date, year = start_dt.month, start_dt.day, start_dt.year
 
@@ -140,12 +129,10 @@ def connect_google():
     
     service = build('calendar', 'v3', credentials=creds)
     
-    # --- FIX: Use calendarList().get() to retrieve user's email ---
     calendar_info = service.calendarList().get(calendarId='primary').execute()
     user_email = calendar_info['id']
     session['current_user_email'] = user_email
     
-    # Get and store calendar events
     now = datetime.datetime.utcnow()
     time_min = now.isoformat() + 'Z'
     time_max = (now + datetime.timedelta(days=7)).isoformat() + 'Z'
@@ -160,15 +147,12 @@ def connect_google():
     conn = sqlite3.connect('calendar_data.db')
     cursor = conn.cursor()
     
-    # Insert or update user
     cursor.execute('INSERT OR REPLACE INTO users (email, last_updated) VALUES (?, CURRENT_TIMESTAMP)', (user_email,))
     print(f"DEBUG: Inserted/updated user {user_email}")
     
-    # Clear existing events for this user
     cursor.execute('DELETE FROM events WHERE user_email = ?', (user_email,))
     print(f"DEBUG: Cleared existing events for {user_email}")
     
-    # Insert new events
     events_inserted = 0
     for event in events:
         try:
@@ -189,22 +173,25 @@ def connect_google():
     
     print(f"DEBUG: Successfully inserted {events_inserted} events for {user_email}")
     
-    # --- FIX: Redirect to the form page correctly ---
     return redirect(url_for('form'))
 
-def create_event(creds, summary, start_datetime, end_datetime, location=None, attendees=None):
-    # --- FIX: No re-authentication. Use the credentials passed into the function ---
+def create_event(creds, summary, start_datetime, end_datetime, location=None, attendees=None, description=None):
     service = build('calendar', 'v3', credentials=creds)
     
     event = {
         'summary': summary,
         'location': location if location else '',
+        'description': description if description else '',
         'start': {'dateTime': start_datetime, 'timeZone': 'America/New_York'},
         'end': {'dateTime': end_datetime, 'timeZone': 'America/New_York'},
         'attendees': [{'email': email} for email in (attendees or [])],
     }
 
-    event_result = service.events().insert(calendarId='primary', body=event).execute()
+    event_result = service.events().insert(
+        calendarId='primary', 
+        body=event,
+        sendUpdates='all'  # Send email notifications to all attendees
+    ).execute()
     return event_result
 
 if __name__ == '__main__':
