@@ -10,7 +10,7 @@ from testLLM import write_llm_prompt, get_llm_response
 
 
 app = Flask(__name__)
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+SCOPES = ['https://www.googleapis.com/auth/calendar.readonly','https://www.googleapis.com/auth/calendar.events']
 
 @app.route('/')
 def index():
@@ -48,6 +48,15 @@ def runLLM():
             splitted_date = date_unparsed.split("-")
             year,month,date = int(splitted_date[0]), int(splitted_date[1]), int(splitted_date[2])
 
+            start_dt = datetime.datetime.fromisoformat(meeting_time_unparsed)
+            end_dt = start_dt + datetime.timedelta(minutes=int(float(num_of_mins_unparsed)))
+            event_result = create_event(
+                summary=event_title,
+                start_datetime=start_dt.isoformat(),
+                end_datetime=end_dt.isoformat(),
+                location=location,
+                attendees=[other_person_email]
+            )
 
             return f"Success! Your meeting time is on {month}/{date}/{year} at {time_unparsed}"
         except Exception as e:
@@ -84,6 +93,27 @@ def connect_google():
             print(start, event.get('summary', 'No Title'))
     result = form()
     return result
+
+def create_event(summary, start_datetime, end_datetime, location=None, attendees=None):
+    flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+    creds = flow.run_local_server(port=0)
+    service = build('calendar', 'v3', credentials=creds)
+    event = {
+        'summary': summary,
+        'location': location if location else '',
+        'start': {
+            'dateTime': start_datetime,
+            'timeZone': 'America/New_York',
+        },
+        'end': {
+            'dateTime': end_datetime,
+            'timeZone': 'America/New_York',
+        },
+        'attendees': [{'email': email} for email in (attendees or [])],
+    }
+
+    event_result = service.events().insert(calendarId='primary', body=event).execute()
+    return event_result
 
 if __name__ == '__main__':
     app.run(debug=True)
