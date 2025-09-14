@@ -101,9 +101,11 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
 
         f.write("\n\n")
        
-        f.write("\n\n\nIf you find a valid time slot that meets all constraints, respond ONLY with the start time in the exact format: {'meeting time':'YYYY-MM-DDTHH:MM:SS','duration': 'NUMBEROFMINUTES'}. Every key and value should be a string, even if it is a number.")
-        f.write("\nDo not include any other words, explanations, or introductory phrases like /'Here is a good time:/'")
-        f.write("\nIf, after analyzing the calendars and constraints, you determine that no common time slot is available, respond ONLY with the word UNAVAILABLE.")
+        f.write("\n\n\nRESPONSE FORMAT:")
+        f.write("\nIf you find a valid time slot, respond with ONLY this exact JSON format (no other text):")
+        f.write("\n{\"meeting time\":\"YYYY-MM-DDTHH:MM:SS\",\"duration\":\"NUMBEROFMINUTES\"}")
+        f.write("\nIf no time slot is available, respond with ONLY: UNAVAILABLE")
+        f.write("\nIMPORTANT: Do not include any explanations, introductions, or extra text. Only return the JSON or UNAVAILABLE.")
         current_datetime_edt = datetime.datetime.now(pytz.timezone('America/New_York'))
 
         f.write(f"\n\nThe current time is {current_datetime_edt}. You should only look at events within the given time period.")# When you return the time period in number of hours, consider eastern time rather than UTC. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ")
@@ -126,7 +128,8 @@ def get_llm_response(new_filename):
     
     client = genai.Client(api_key=api_key)
     response = client.models.generate_content(
-        model="gemini-2.5-flash", contents=prompt
+        model="gemini-2.5-flash", 
+        contents=prompt
     )
     return (response.text)
 

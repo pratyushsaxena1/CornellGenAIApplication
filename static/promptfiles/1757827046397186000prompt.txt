@@ -1,0 +1,35 @@
+ROLE:
+You are an intelligent scheduling assistant. Your purpose is to analyze calendar information and identify a single common time slot for a meeting that respects all given constraints.
+
+TASK:
+Your job is to find one available time slot for a meeting based on the calendars and constraints provided below. You must find a time that is free for every single person. If there is no time slot where every single person is free, then find a time slot where most people are free.
+
+
+
+
+
+CALENDAR DATA:
+No calendar data found for pratyushsaxena4@gmail.com
+
+ak2788@cornell.edu: Busy from 2025-09-14T00:15:02-04:00 to 2025-09-14T01:45:02-04:00 - Play some basketball (from ak2788@cornell.edu calendar); Busy from 2025-09-14T08:00:00-04:00 to 2025-09-14T09:30:00-04:00 - Play some basketball (from ak2788@cornell.edu calendar); Busy from 2025-09-14T22:00:00-04:00 to 2025-09-15T00:00:00-04:00 - [CVC F25] Submit your application! (from 367903a46326c2de293b9bc325d0b4cf2cd1901ff7082d737955f36beb8b7055@group.calendar.google.com calendar); Busy from 2025-09-15T09:05:00-04:00 to 2025-09-15T09:55:00-04:00 - MATH 2210 (from ak2788@cornell.edu calendar); Busy from 2025-09-15T10:10:00-04:00 to 2025-09-15T11:25:00-04:00 - ENGL 1170 (from ak2788@cornell.edu calendar); Busy from 2025-09-15T16:45:00-04:00 to 2025-09-15T18:25:00-04:00 - Wind Symphony Rehearsal (from ak2788@cornell.edu calendar); Busy from 2025-09-15T17:00:00-04:00 to 2025-09-15T18:00:00-04:00 - Info Session #2 (from c_cff9b3f57051b6cf78c596dfe31e84ac419d83bb65b2636cc88cfa07a921f5fa@group.calendar.google.com calendar); Busy from 2025-09-16T10:10:00-04:00 to 2025-09-16T11:25:00-04:00 - CS 2110 (from ak2788@cornell.edu calendar); Busy from 2025-09-16T12:20:00-04:00 to 2025-09-16T13:10:00-04:00 - CS 2110 Discussion (from ak2788@cornell.edu calendar); Busy from 2025-09-16T14:55:00-04:00 to 2025-09-16T16:10:00-04:00 - ECON 2801  (from ak2788@cornell.edu calendar); Busy from 2025-09-16T16:30:00-04:00 to 2025-09-16T17:00:00-04:00 - Bassoon sectional (from ak2788@cornell.edu calendar); Busy from 2025-09-16T17:30:00-04:00 to 2025-09-16T18:30:00-04:00 - DTI info session (from c_c14724d2a3d0ae6742ecff962d8ae3991ab90525b7558286b21cb95f32612fcb@group.calendar.google.com calendar); Busy from 2025-09-17T09:05:00-04:00 to 2025-09-17T09:55:00-04:00 - MATH 2210 (from ak2788@cornell.edu calendar); Busy from 2025-09-17T10:10:00-04:00 to 2025-09-17T11:25:00-04:00 - ENGL 1170 (from ak2788@cornell.edu calendar); Busy from 2025-09-17T14:30:00-04:00 to 2025-09-17T15:20:00-04:00 - MATH 2210 Discussion (from ak2788@cornell.edu calendar); Busy from 2025-09-17T16:30:00-04:00 to 2025-09-17T20:30:00-04:00 - Interview Round 1 (from 367903a46326c2de293b9bc325d0b4cf2cd1901ff7082d737955f36beb8b7055@group.calendar.google.com calendar); Busy from 2025-09-17T16:45:00-04:00 to 2025-09-17T18:25:00-04:00 - Wind Symphony Rehearsal (from ak2788@cornell.edu calendar); Busy from 2025-09-17T17:00:00-04:00 to 2025-09-17T18:00:00-04:00 - SABA Info session (from c_c14724d2a3d0ae6742ecff962d8ae3991ab90525b7558286b21cb95f32612fcb@group.calendar.google.com calendar); Busy from 2025-09-17T18:00:00-04:00 to 2025-09-17T19:30:00-04:00 - Resume Review (from c_cff9b3f57051b6cf78c596dfe31e84ac419d83bb65b2636cc88cfa07a921f5fa@group.calendar.google.com calendar); Busy from 2025-09-18T16:30:00-04:00 to 2025-09-18T20:30:00-04:00 - Interview Round 1 (from 367903a46326c2de293b9bc325d0b4cf2cd1901ff7082d737955f36beb8b7055@group.calendar.google.com calendar); Busy from 2025-09-20T10:00:00-04:00 to 2025-09-20T16:30:00-04:00 - Interview Round 2 (from 367903a46326c2de293b9bc325d0b4cf2cd1901ff7082d737955f36beb8b7055@group.calendar.google.com calendar); Busy from 2025-09-20T14:00:00-04:00 to 2025-09-20T15:00:00-04:00 - SABA Info session (from c_c14724d2a3d0ae6742ecff962d8ae3991ab90525b7558286b21cb95f32612fcb@group.calendar.google.com calendar)
+
+USER INPUTS:
+Thing to do: Play some basketball
+Person to meet with: pratyushsaxena4@gmail.com
+Time period (in what time period the meeting has to take place): in the next 2 days
+Duration: 2 hours
+Location: rpcc courts
+Additional information: no
+
+
+
+
+
+If you find a valid time slot that meets all constraints, respond ONLY with the start time in the exact format: {'meeting time':'YYYY-MM-DDTHH:MM:SS','duration': 'NUMBEROFMINUTES'}. Every key and value should be a string, even if it is a number.
+Do not include any other words, explanations, or introductory phrases like /'Here is a good time:/'
+If, after analyzing the calendars and constraints, you determine that no common time slot is available, respond ONLY with the word UNAVAILABLE.
+
+The current time is 2025-09-14 01:17:26.412328-04:00. You should only look at events within the given time period.
+Leave at least a 15-minute buffer before and after other events so that people can easily get from one event to this scheduled event. 
+Please give preference to reasonable times. For example, you shouldn't schedule an event for the middle of the night unless there's no other option.
+Take the event title into account, and determine what would be a good time for that event.

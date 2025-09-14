@@ -103,13 +103,32 @@ def runLLM():
 
             new_filename = write_llm_prompt(event_title, other_person_email, time_period, duration, location, other_info, current_user_email)
             llm_response = get_llm_response(new_filename)
+            print(f"DEBUG: Raw LLM response: {llm_response}")
 
             if llm_response == "UNAVAILABLE":
                 return "No time available!"
 
-            llm_response_dict = ast.literal_eval(llm_response)
-            meeting_time_str = llm_response_dict['meeting time']
-            duration_mins = int(float(llm_response_dict['duration']))
+            # Clean the response to handle potential formatting issues
+            llm_response = llm_response.strip()
+            
+            # Try to extract JSON from the response if it's wrapped in other text
+            if llm_response.startswith('{') and llm_response.endswith('}'):
+                response_text = llm_response
+            else:
+                # Look for JSON pattern in the response
+                import re
+                json_match = re.search(r'\{.*\}', llm_response)
+                if json_match:
+                    response_text = json_match.group()
+                else:
+                    return f"Error: Could not parse LLM response. Response was: {llm_response}"
+
+            try:
+                llm_response_dict = ast.literal_eval(response_text)
+                meeting_time_str = llm_response_dict['meeting time']
+                duration_mins = int(float(llm_response_dict['duration']))
+            except (ValueError, SyntaxError, KeyError) as e:
+                return f"Error parsing LLM response: {e}. Response was: {response_text}"
 
             start_dt = datetime.datetime.fromisoformat(meeting_time_str)
             end_dt = start_dt + datetime.timedelta(minutes=duration_mins)
