@@ -4,6 +4,8 @@ import json
 import datetime
 import sqlite3
 from google import genai
+import pytz
+
 # from flask import request
 
 
@@ -31,7 +33,7 @@ def get_calendar_data_from_db(person_to_meet_with):
     cursor = conn.cursor()
     
     cursor.execute('''
-        SELECT summary, start_time, end_time 
+        SELECT summary, start_time, end_time, calendar_id 
         FROM events 
         WHERE user_email = ?
         ORDER BY start_time
@@ -44,8 +46,9 @@ def get_calendar_data_from_db(person_to_meet_with):
         return f"No calendar data found for {person_to_meet_with}"
     
     busy_times = []
-    for summary, start_time, end_time in events:
-        busy_times.append(f"Busy from {start_time} to {end_time} - {summary}")
+    for summary, start_time, end_time, calendar_id in events:
+        calendar_info = f" (from {calendar_id} calendar)" if calendar_id != 'primary' else ""
+        busy_times.append(f"Busy from {start_time} to {end_time} - {summary}{calendar_info}")
     
     return f"{person_to_meet_with}: " + "; ".join(busy_times)
 
@@ -55,10 +58,11 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
  
     #google gemini first call to get the time period so we can give it to google calendar
     with open("static/py/apikey.txt", "r") as f:
-        currTime = datetime.datetime.utcnow()
+        current_datetime_edt = datetime.datetime.now(pytz.timezone('America/New_York'))
+
 
         api_key = f.read().strip()
-        timePdPrompt = f"The time period is {time_period}. The current time is {currTime} (UTC). I want you to return the time period in number of hours, consider eastern time rather than UTC. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ONLY return a single number, no other text like \'Here is the number of hours\'"
+        timePdPrompt = f"The time period is {time_period}. The current time is {current_datetime_edt} . I want you to return the time period in number of hours. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ONLY return a single number, no other text like \'Here is the number of hours\'.\nRemember, this is the real time period: {time_period}"
         client = genai.Client(api_key=api_key)
         timePdResponse = client.models.generate_content(
             model="gemini-2.5-flash", contents=timePdPrompt
@@ -100,11 +104,12 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
         f.write("\n\n\nIf you find a valid time slot that meets all constraints, respond ONLY with the start time in the exact format: {'meeting time':'YYYY-MM-DDTHH:MM:SS','duration': 'NUMBEROFMINUTES'}. Every key and value should be a string, even if it is a number.")
         f.write("\nDo not include any other words, explanations, or introductory phrases like /'Here is a good time:/'")
         f.write("\nIf, after analyzing the calendars and constraints, you determine that no common time slot is available, respond ONLY with the word UNAVAILABLE.")
-   
-        f.write(f"The current time is {currTime} (UTC).")# When you return the time period in number of hours, consider eastern time rather than UTC. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ")
+        current_datetime_edt = datetime.datetime.now(pytz.timezone('America/New_York'))
+
+        f.write(f"\n\nThe current time is {current_datetime_edt}. You should only look at events within the given time period.")# When you return the time period in number of hours, consider eastern time rather than UTC. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ")
         #f.write("Remember that the meeting time is not the current time. The meeting time is the time I would like you to schedule the meeting for. the current time is solely used for helping you calculate time period.")
 
-        f.write("Leave at least a 15-minute buffer before and after other events so that people can easily get from one event to this scheduled event.")
+        f.write("\nLeave at least a 15-minute buffer before and after other events so that people can easily get from one event to this scheduled event.")
     f.close()
 
 

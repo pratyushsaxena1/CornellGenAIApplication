@@ -29,6 +29,7 @@ pyasn1_modules==0.4.2
 pydantic==2.11.7
 pydantic_core==2.33.2
 pyparsing==3.2.3
+pytz==2025.2
 requests==2.32.5
 requests-oauthlib==2.0.0
 rsa==4.9.1

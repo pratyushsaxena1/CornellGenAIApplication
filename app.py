@@ -34,6 +34,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_email TEXT NOT NULL,
+            calendar_id TEXT NOT NULL,
             event_id TEXT NOT NULL,
             summary TEXT,
             start_time TEXT,
@@ -41,6 +42,16 @@ def init_db():
             FOREIGN KEY (user_email) REFERENCES users (email)
         )
     ''')
+    
+    # Check if calendar_id column exists, if not add it (for existing databases)
+    cursor.execute("PRAGMA table_info(events)")
+    columns = [column[1] for column in cursor.fetchall()]
+    
+    if 'calendar_id' not in columns:
+        print("DEBUG: Adding calendar_id column to existing events table")
+        cursor.execute('ALTER TABLE events ADD COLUMN calendar_id TEXT DEFAULT "primary"')
+        # Update existing records to have calendar_id as 'primary'
+        cursor.execute('UPDATE events SET calendar_id = "primary" WHERE calendar_id IS NULL')
     
     conn.commit()
     conn.close()
@@ -129,20 +140,59 @@ def connect_google():
     
     service = build('calendar', 'v3', credentials=creds)
     
-    calendar_info = service.calendarList().get(calendarId='primary').execute()
-    user_email = calendar_info['id']
+    # Get all calendars the user has access to
+    calendar_list = service.calendarList().list().execute()
+    calendars = calendar_list.get('items', [])
+    
+    # Get user email from primary calendar
+    primary_calendar = service.calendarList().get(calendarId='primary').execute()
+    user_email = primary_calendar['id']
     session['current_user_email'] = user_email
     
     now = datetime.datetime.utcnow()
     time_min = now.isoformat() + 'Z'
     time_max = (now + datetime.timedelta(days=7)).isoformat() + 'Z'
-    events_result = service.events().list(
-        calendarId='primary', timeMin=time_min, timeMax=time_max,
-        singleEvents=True, orderBy='startTime', maxResults=50
-    ).execute()
-    events = events_result.get('items', [])
     
-    print(f"DEBUG: Found {len(events)} events for {user_email}")
+    # Fetch events from all calendars
+    all_events = []
+    for calendar in calendars:
+        calendar_id = calendar['id']
+        calendar_summary = calendar.get('summary', 'Unknown Calendar')
+        print(f"DEBUG: Fetching events from calendar: {calendar_summary} ({calendar_id})")
+        
+        try:
+            events_result = service.events().list(
+                calendarId=calendar_id, 
+                timeMin=time_min, 
+                timeMax=time_max,
+                singleEvents=True, 
+                orderBy='startTime', 
+                maxResults=50
+            ).execute()
+            calendar_events = events_result.get('items', [])
+            
+            # Add calendar_id to each event and filter out all-day events
+            filtered_events = []
+            for event in calendar_events:
+                # Check if event is all-day (has 'date' instead of 'dateTime')
+                start_time = event['start']
+                end_time = event['end']
+                
+                # Skip all-day events (events with 'date' field instead of 'dateTime')
+                if 'date' in start_time and 'dateTime' not in start_time:
+                    print(f"DEBUG: Skipping all-day event: {event.get('summary', 'No Title')}")
+                    continue
+                
+                event['calendar_id'] = calendar_id
+                event['calendar_summary'] = calendar_summary
+                filtered_events.append(event)
+            
+            all_events.extend(filtered_events)
+            print(f"DEBUG: Found {len(filtered_events)} timed events in {calendar_summary} (excluded all-day events)")
+        except Exception as e:
+            print(f"DEBUG: Error fetching events from {calendar_summary}: {e}")
+    
+    print(f"DEBUG: Total events found across all calendars: {len(all_events)} for user {user_email}")
     
     conn = sqlite3.connect('calendar_data.db')
     cursor = conn.cursor()
@@ -154,17 +204,18 @@ def connect_google():
     print(f"DEBUG: Cleared existing events for {user_email}")
     
     events_inserted = 0
-    for event in events:
+    for event in all_events:
         try:
             start = event['start'].get('dateTime', event['start'].get('date'))
             end = event['end'].get('dateTime', event['end'].get('date'))
             summary = event.get('summary', 'No Title')
             event_id = event.get('id', '')
+            calendar_id = event.get('calendar_id', 'primary')
             
-            cursor.execute('INSERT INTO events (user_email, event_id, summary, start_time, end_time) VALUES (?, ?, ?, ?, ?)',
-                           (user_email, event_id, summary, start, end))
+            cursor.execute('INSERT INTO events (user_email, calendar_id, event_id, summary, start_time, end_time) VALUES (?, ?, ?, ?, ?, ?)',
+                           (user_email, calendar_id, event_id, summary, start, end))
             events_inserted += 1
-            print(f"DEBUG: Inserted event: {summary} from {start} to {end}")
+            print(f"DEBUG: Inserted event: {summary} from {start} to {end} in calendar {event.get('calendar_summary', calendar_id)}")
         except Exception as e:
             print(f"DEBUG: Error inserting event {event.get('summary', 'Unknown')}: {e}")
     
@@ -175,7 +226,7 @@ def connect_google():
     
     return redirect(url_for('form'))
 
-def create_event(creds, summary, start_datetime, end_datetime, location=None, attendees=None, description=None):
+def create_event(creds, summary, start_datetime, end_datetime, location=None, attendees=None, description=None, calendar_id='primary'):
     service = build('calendar', 'v3', credentials=creds)
     
     event = {
@@ -188,9 +239,9 @@ def create_event(creds, summary, start_datetime, end_datetime, location=None, at
     }
 
     event_result = service.events().insert(
-        calendarId='primary', 
+        calendarId=calendar_id, 
         body=event,
-        sendUpdates='all'  # Send email notifications to all attendees
+        sendUpdates='all' 
     ).execute()
     return event_result
 
