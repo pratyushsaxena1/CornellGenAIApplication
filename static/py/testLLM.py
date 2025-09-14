@@ -109,7 +109,7 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
         f.write(f"\n\nThe current time is {current_datetime_edt}. You should only look at events within the given time period.")# When you return the time period in number of hours, consider eastern time rather than UTC. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ")
         #f.write("Remember that the meeting time is not the current time. The meeting time is the time I would like you to schedule the meeting for. the current time is solely used for helping you calculate time period.")
 
-        f.write("\nLeave at least a 15-minute buffer before and after other events so that people can easily get from one event to this scheduled event.")
+        f.write("\nLeave at least a 15-minute buffer before and after other events so that people can easily get from one event to this scheduled event. \nPlease give preference to reasonable times. For example, you shouldn't schedule an event for the middle of the night unless there's no other option.\nTake the event title into account, and determine what would be a good time for that event.")
     f.close()
 
 
