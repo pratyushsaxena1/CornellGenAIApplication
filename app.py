@@ -126,7 +126,7 @@ def runLLM():
 
             creds = Credentials(**session['credentials'])
 
-            create_event(
+            event_result = create_event(
                 creds=creds,
                 summary=event_title,
                 start_datetime=start_dt.isoformat(),
@@ -135,6 +135,29 @@ def runLLM():
                 attendees=[other_person_email],
                 description=other_info
             )
+
+            try:
+                conn = sqlite3.connect('calendar_data.db')
+                cursor = conn.cursor()
+                cursor.execute(
+                    'INSERT INTO events (user_email, calendar_id, event_id, summary, start_time, end_time) VALUES (?, ?, ?, ?, ?, ?)',
+                    (
+                        current_user_email,
+                        'primary',
+                        event_result.get('id', ''),
+                        event_title,
+                        start_dt.isoformat(),
+                        end_dt.isoformat()
+                    )
+                )
+                conn.commit()
+            except Exception as db_err:
+                print(f"DEBUG: Failed to insert created event into DB: {db_err}")
+            finally:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
 
             time_unparsed = start_dt.strftime('%-I:%M %p')
             month, date, year = start_dt.month, start_dt.day, start_dt.year
