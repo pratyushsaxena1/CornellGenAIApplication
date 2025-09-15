@@ -6,7 +6,7 @@ Your job is to find one available time slot for a meeting based on the calendars
 
 
 
-Current time: 2025-09-10 03:58:11.326179
+Current time: 2025-09-10 03:58:11.326179 (UTC). When you return the time period in number of hours, consider eastern time rather than UTC. If the user says something like "Today" then the time period that you return should be the hours from now until the end of the day. 
 
 
 
