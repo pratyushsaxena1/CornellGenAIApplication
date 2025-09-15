@@ -9,16 +9,23 @@ import os
 import sqlite3
 import json
 import pathlib
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'static', 'py'))
 from testLLM import write_llm_prompt, get_llm_response
 
-
 app = Flask(__name__)
 app.secret_key = 'mol_and_prat_goat'
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly', 'https://www.googleapis.com/auth/calendar.events']
+
+SCOPES = [
+    'openid',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/calendar.readonly',
+    'https://www.googleapis.com/auth/calendar.events'
+]
+
 GOOGLE_CLIENT_SECRETS_FILE = os.path.join(pathlib.Path(__file__).parent, "credentials.json")
 
 
@@ -80,8 +87,8 @@ def index():
 def form():
     if 'credentials' not in session:
         return redirect(url_for('index'))
-    return render_template('eventDetailsForm.html')
-
+    user_name = session.get('current_user_name', 'Unknown User')
+    return render_template('eventDetailsForm.html', user_name=user_name)
 
 @app.route('/runLLM', methods=["GET", "POST"])
 def runLLM():
@@ -101,34 +108,18 @@ def runLLM():
             if not current_user_email:
                 return "Error: User email not found in session. Please reconnect your Google Account."
 
-            new_filename = write_llm_prompt(event_title, other_person_email, time_period, duration, location, other_info, current_user_email)
+            new_filename = write_llm_prompt(
+                event_title, other_person_email, time_period,
+                duration, location, other_info, current_user_email
+            )
             llm_response = get_llm_response(new_filename)
-            print(f"DEBUG: Raw LLM response: {llm_response}")
 
             if llm_response == "UNAVAILABLE":
-                return "No time available!"
+                return render_template("results.html", error="No time available!")
 
-            # Clean the response to handle potential formatting issues
-            llm_response = llm_response.strip()
-            
-            # Try to extract JSON from the response if it's wrapped in other text
-            if llm_response.startswith('{') and llm_response.endswith('}'):
-                response_text = llm_response
-            else:
-                # Look for JSON pattern in the response
-                import re
-                json_match = re.search(r'\{.*\}', llm_response)
-                if json_match:
-                    response_text = json_match.group()
-                else:
-                    return f"Error: Could not parse LLM response. Response was: {llm_response}"
-
-            try:
-                llm_response_dict = ast.literal_eval(response_text)
-                meeting_time_str = llm_response_dict['meeting time']
-                duration_mins = int(float(llm_response_dict['duration']))
-            except (ValueError, SyntaxError, KeyError) as e:
-                return f"Error parsing LLM response: {e}. Response was: {response_text}"
+            llm_response_dict = ast.literal_eval(llm_response)
+            meeting_time_str = llm_response_dict['meeting time']
+            duration_mins = int(float(llm_response_dict['duration']))
 
             start_dt = datetime.datetime.fromisoformat(meeting_time_str)
             end_dt = start_dt + datetime.timedelta(minutes=duration_mins)
@@ -148,12 +139,41 @@ def runLLM():
             time_unparsed = start_dt.strftime('%-I:%M %p')
             month, date, year = start_dt.month, start_dt.day, start_dt.year
 
-            return f"Success! Your meeting time is on {month}/{date}/{year} at {time_unparsed}"
+            session['last_event'] = {
+                "event_title": event_title,
+                "month": month,
+                "date": date,
+                "year": year,
+                "time_unparsed": time_unparsed,
+                "location": location,
+                "other_person_email": other_person_email,
+                "other_info": other_info
+            }
+            return redirect(url_for('results'))
         except Exception as e:
-            return f"Error: {str(e)}"
+            return render_template("results.html", error=str(e))
 
     return "Please submit the form to run the LLM"
 
+@app.route('/results')
+def results():
+    if 'last_event' not in session:
+        return redirect(url_for('form'))
+    return render_template("results.html", **session['last_event'])
+
+@app.route('/test_results')
+def test_results():
+    return render_template(
+        "results.html",
+        event_title="Demo Meeting",
+        month=9,
+        date=15,
+        year=2025,
+        time_unparsed="3:00 PM",
+        location="Library",
+        other_person_email="friend@example.com",
+        other_info="Bring your laptop"
+    )
 
 @app.route('/connect_google')
 def connect_google():
@@ -184,13 +204,23 @@ def oauth2callback():
     creds = flow.credentials
     session['credentials'] = credentials_to_dict(creds)
 
+    # Fetch user profile (name + email) from People API
+    people_service = build('people', 'v1', credentials=creds)
+    profile = people_service.people().get(
+        resourceName='people/me',
+        personFields='names,emailAddresses'
+    ).execute()
+
+    user_email = profile['emailAddresses'][0]['value']
+    user_name = profile['names'][0]['displayName']
+
+    session['current_user_email'] = user_email
+    session['current_user_name'] = user_name
+
+    # Fetch calendar events
     service = build('calendar', 'v3', credentials=creds)
     calendar_list = service.calendarList().list().execute()
     calendars = calendar_list.get('items', [])
-
-    primary_calendar = service.calendarList().get(calendarId='primary').execute()
-    user_email = primary_calendar['id']
-    session['current_user_email'] = user_email
 
     now = datetime.datetime.utcnow()
     time_min = now.isoformat() + 'Z'

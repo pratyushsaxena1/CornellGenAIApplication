@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meeting Scheduled</title>
+    <link rel="stylesheet" href="/static/css/homepage_style.css">
+</head>
+<body>
+    <h3>Your event has been created.</h3>
+    
+    <!-- Add class "event-card" for styling -->
+    <div id="container" class="event-card">
+        <p id="containerp">Event: {{ event_title }}</p>
+        <p id="containerp">Date: {{ month }}/{{ date }}/{{ year }}</p>
+        <p id="containerp">Time: {{ time_unparsed }}</p>
+        <p id="containerp">Location: {{ location }}</p>
+        <p id="containerp">With: {{ other_person_email }}</p>
+        <p id="containerp">Details: {{ other_info }}</p>
+    </div>
+
+    <div id="form_div">
+        <div class="buttons2">
+            <a href="https://calendar.google.com/" target="_blank">
+                <button type="button">Check it out on your Google Calendar</button>
+            </a>
+            <a href="{{ url_for('form') }}">
+                <button type="button">Plan Another Event</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

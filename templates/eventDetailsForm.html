@@ -6,25 +6,71 @@
 </head>
 <body>
 
-<h2>Google Calendar Meetup Planner</h2>
+<h3>Welcome, {{ user_name }}.</h3>
 
-<div id = "form_div">
-    <form id = "main_form" method="POST" action="/runLLM">
-    <label for="event_title">Event Name</label><br>
-    <input type="text" id="event_title" name="event_title" placeholder="What do you want to do? (e.g. watch a movie, etc.)"><br>
-    <label for="other_person_email">Event Collaborator’s Email</label><br>
-    <input type="text" id="other_person_email" name="other_person_email" placeholder="What is the email of the event collaborator? (e.g. johnsmith@gmail.com, etc.)"><br>
-    <label for="time_period">Time Period</label><br>
-    <input type="text" id="time_period" name="time_period" placeholder="What time period would you like to meet with them? (e.g. in the next 3 days, etc.)"><br>
-    <label for="duration">Duration</label><br>
-    <input type="text" id="duration" name="duration" placeholder="How long would you like to meet with them? (e.g. 30 minutes, 1 hour, etc.)"><br>
-    <label for="location">Location</label><br>
-    <input type="text" id="location" name="location" placeholder="Where do you want to meet? (e.g. XYZ Street, etc.)"><br>
-    <label for="other_info">Other Information</label><br>
-    <input type="text" id="other_info" name="other_info" placeholder="Any other information you want to add? (e.g. reminder to bring water, etc.)"><br><br>
-    <input type="submit" value="Submit">
-    </form> 
+<div id="form_div">
+    <form id="main_form" method="POST" action="/runLLM">
+        <div class="card active">
+            <label for="event_title">Event Name</label><br>
+            <input type="text" id="event_title" name="event_title" placeholder="What do you want to do? (e.g. watch a movie, etc.)">
+        </div>
+
+        <div class="card">
+            <label for="other_person_email">Event Collaborator’s Email</label><br>
+            <input type="text" id="other_person_email" name="other_person_email" placeholder="What is the email of the event collaborator? (e.g. johnsmith@gmail.com, etc.)">
+        </div>
+
+        <div class="card">
+            <label for="time_period">Time Period</label><br>
+            <input type="text" id="time_period" name="time_period" placeholder="What time period would you like to meet with them? (e.g. in the next 3 days, etc.)">
+        </div>
+
+        <div class="card">
+            <label for="duration">Duration</label><br>
+            <input type="text" id="duration" name="duration" placeholder="How long would you like to meet with them? (e.g. 30 minutes, 1 hour, etc.)">
+        </div>
+
+        <div class="card">
+            <label for="location">Location</label><br>
+            <input type="text" id="location" name="location" placeholder="Where do you want to meet? (e.g. XYZ Street, etc.)">
+        </div>
+
+        <div class="card">
+            <label for="other_info">Other Information</label><br>
+            <input type="text" id="other_info" name="other_info" placeholder="Any other information you want to add? (e.g. reminder to bring water, etc.)">
+        </div>
+
+        <div class="buttons">
+            <button type="button" id="backBtn" onclick="changeCard(-1)" disabled>Back</button>
+            <button type="button" id="nextBtn" onclick="changeCard(1)">Next</button>
+            <input type="submit" id="formSubmitBtn" value="Submit" class="hidden">
+        </div>
+    </form>
 </div>
+
+<script>
+    let currentCard = 0;
+    const cards = document.querySelectorAll(".card");
+    const backBtn = document.getElementById("backBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function changeCard(direction) {
+        cards[currentCard].classList.remove("active");
+        currentCard += direction;
+        cards[currentCard].classList.add("active");
+
+        backBtn.disabled = currentCard === 0;
+
+        if (currentCard === cards.length - 1) {
+            nextBtn.style.display = "none";
+            formSubmitBtn.classList.remove("hidden"); // show submit
+        } else {
+            nextBtn.style.display = "inline-block";
+            formSubmitBtn.classList.add("hidden"); // hide submit
+        }
+    }
+</script>
 
 </body>
 </html>

@@ -1,20 +1,66 @@
+/* Body and Typography */
 body {
     background-color: #D0CCD0;
     color: #274156;
     font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
     text-align: center;
     letter-spacing: 2vw;
     font-size: 6em;
+    margin: 2vh 0;
+    margin-top: 5vh;
 }
 
 h2 {
     text-align: center;
     color: #1C6E8C;
-    margin-top: -6vh;
     font-size: 2em;
+    margin: 1.5vh 0;
+}
+
+h3 {
+    text-align: center;
+    font-size: 4em;
+    margin: 2vh 0;
+    margin-top: 10vh;
+}
+
+/* Cards */
+.card {
+    display: none;
+    background-color: #274156; /* dark blue */
+    color: #FFFFFF;
+    border-radius: 2vw;
+    padding: 3vh 3vw;
+    margin: 3vh auto;
+    margin-top: 10vh;
+    margin-bottom: 8vh;
+    width: 50vw;
+    min-width: 300px;
+    box-shadow: 0px 1vh 2vh rgba(0,0,0,0.3);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card.active {
+    display: block;
+    transform: translateY(0);
+}
+
+.card input[type=text] {
+    width: 80%;
+    max-width: 40vw;
+    padding: 1vh 1vw;
+    font-size: 1.2vw;
+    margin: 1vh 0;
+    border: 0.2vw solid #ccc;
+    border-radius: 1vw;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 #form_div {
@@ -31,6 +77,145 @@ h2 {
     color: #274156;
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#containerp {
+    text-align: center;
+    color: white;
+    margin-top: 3.5vh;
+    font-size: 1.2em;
+}
+
+.event-card {
+    background-color: #274156;   /* white card */
+    color: white;
+    border-radius: 2vw;
+    margin: auto;
+    margin-top: 5vh;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    width: 22vw;
+    height: 40vh;
+    box-shadow: 0px 1vh 2vh rgba(0,0,0,0.2);
+    text-align: left; /* better readability for details */
+}
+
+.event-card p {
+    margin: 1vh 0;
+    font-size: 1.2em;
+    color: white;
+}
+
+/* Labels */
+label {
+    display: block;
+    font-size: 1.5vw;
+    margin-bottom: 1vh;
+    color: #FFFFFF;
+}
+
+/* Buttons */
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2vh;
+    width: 50vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.buttons button {
+    width: 18vw;
+    padding: 1.2vh 1vw;
+    font-size: 1.2vw;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #1C6E8C;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 1.5vw;
+    box-shadow: 0px 0.5vh 1vh rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    text-align: center;
+}
+
+.buttons button:hover:not(:disabled) {
+    background-color: #274156; /* matches main text color */
+    transform: scale(1.05);
+}
+
+.buttons button:disabled {
+    background-color: #ccc;
+    cursor: default;
+    color: #666;
+}
+
+.buttons2 {
+    display: flex;
+    width: 50vw;
+    display: block;
+}
+
+.buttons2 button {
+    width: 40vw;
+    padding: 2vh 1.3vw;
+    font-size: 2vw;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #1C6E8C;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 1.5vw;
+    box-shadow: 0px 0.5vh 1vh rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    text-align: center;
+    margin-top: 4vh;
+}
+
+.buttons2 button:hover:not(:disabled) {
+    background-color: #274156; /* matches main text color */
+    transform: scale(1.05);
+}
+
+.buttons2 button:disabled {
+    background-color: #ccc;
+    cursor: default;
+    color: #666;
+}
+
+/* Multi-step Form Submit Button */
+#formSubmitBtn {
+    width: 18vw;
+    padding: 1.2vh 1vw;
+    font-size: 1.2vw;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #1C6E8C;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 1.5vw;
+    box-shadow: 0px 0.5vh 1vh rgba(0,0,0,0.2);
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.3s ease, transform 0.2s ease;
+    display: inline-block; /* make sure CSS shows it by default */
+}
+
+#formSubmitBtn.hidden {
+    display: none; /* hide only when .hidden is applied */
+}
+
+#formSubmitBtn:hover {
+    background-color: #274156;
+    transform: scale(1.05);
+}
+
+/* Google Button */
 .google-btn {
     display: flex;
     align-items: center;
@@ -58,47 +243,12 @@ h2 {
 }
 
 .google-btn:hover {
-    background-color: #274156;   /* matches your main text color */
+    background-color: #274156;   /* matches main text color */
     transform: scale(1.05);
 }
 
-#mainform {
+/* Form Container */
+#form_div {
     text-align: center;
-}
-
-label {
-    font-size: 1.5vw;
-    color: white;
-    text-align: center;
-}
-
-input[type=text]{
-    width: 40vw;
-    text-align: center;
-    padding: 0.8vw 1.4vw;
-    font-size: 1vw;
-    margin: 1vw;
-    display: inline-block;
-    border: 0.2vw solid #ccc;
-    border-radius: 0.2vw;
-    box-sizing: border-box;
-}
-
-input[type=submit]{
-    width: 40vw;
-    text-align: center;
-    padding: 0.8vw 1.4vw;
-    font-size: 1.5vw;
-    display: inline-block;
-    border: 0.2vw solid #ccc;
-    background-color: black;
-    color: white;
-    border-radius: 0.2vw;
-    box-sizing: border-box;
-}
-
-input[type=submit]:hover {
-    cursor: pointer;
-    background-color: rgb(56, 55, 55);
-    color: rgb(189, 186, 186);
+    margin-top: 5vh;
 }
