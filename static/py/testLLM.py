@@ -5,6 +5,7 @@ import datetime
 import sqlite3
 from google import genai
 import pytz
+from openai import OpenAI
 
 
 # from flask import request

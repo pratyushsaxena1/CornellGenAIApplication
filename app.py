@@ -100,13 +100,13 @@ def credentials_to_dict(credentials):
 
 def parse_llm_output(raw: str):
    s = raw.strip()
-   # Strip code fences if present
+
    if s.startswith("```"):
        s = s.strip("`")
-       # remove optional leading language label
+
        if s.startswith("json"):
            s = s[4:].lstrip()
-   # Extract the first {...} block
+
    m = re.search(r'\{.*\}', s, re.DOTALL)
    if not m:
        raise ValueError("No JSON object found in LLM response")
@@ -114,7 +114,7 @@ def parse_llm_output(raw: str):
    try:
        return json.loads(obj_text)
    except json.JSONDecodeError:
-       # Fallback: replace single quotes → double quotes
+
        return json.loads(obj_text.replace("'", '"'))
 
 
@@ -330,7 +330,7 @@ def oauth2callback():
    session['current_user_name'] = user_name
 
 
-   # Fetch calendar events
+   #fetch calendar events
    service = build('calendar', 'v3', credentials=creds)
    calendar_list = service.calendarList().list().execute()
    calendars = calendar_list.get('items', [])
