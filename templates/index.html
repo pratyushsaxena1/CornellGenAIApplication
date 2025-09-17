@@ -6,16 +6,28 @@
     <title>CREAVENT</title>
 </head>
 <body>
-<h1>CREAVENT</h1>
-<h2>Your Personal Event Creator</h2>
+<br><br><br><br><br><br><br><br>
+<h1 id="title">
+  <span>C</span><span>R</span><span>E</span><span>A</span><span>V</span><span>E</span><span>N</span><span>T</span>
+</h1>
+<h2 id="subtitle">Your Personal Event Creator</h2>
 <div id="form_div">
-    <form method="GET" action="/connect_google">
+  <form method="GET" action="/connect_google">
     <button type="submit" class="google-btn">
-        <span>Begin</span>
-        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">
+      <span>Begin</span>
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">
     </button>
-</form>
-<p>Created By: Anmol Karan & Pratyush Saxena</p>
+  </form>
+  <p>Created By: Anmol Karan & Pratyush Saxena</p>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Total delay = last letter delay (0.7s) + duration (0.6s) = 1.3s
+    setTimeout(() => {
+        document.getElementById("subtitle").style.opacity = 1;
+        document.getElementById("form_div").style.opacity = 1;
+    }, 1400);
+});
+</script>
 </body>
 </html>
