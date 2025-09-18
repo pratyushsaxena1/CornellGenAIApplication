@@ -8,14 +8,55 @@
 <body>
     <h3>Your event has been created.</h3>
     
-    <!-- Add class "event-card" for styling -->
-    <div id="container" class="event-card">
-        <p id="containerp">Event: {{ event_title }}</p>
-        <p id="containerp">Date: {{ month }}/{{ date }}/{{ year }}</p>
-        <p id="containerp">Time: {{ time_unparsed }}</p>
-        <p id="containerp">Location: {{ location }}</p>
-        <p id="containerp">With: {{ other_person_email }}</p>
-        <p id="containerp">Details: {{ other_info }}</p>
+    <!-- Enhanced event card with proper structure -->
+    <div class="event-card">
+        <div class="event-detail">
+            <svg class="detail-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="detail-label">Event:</span>
+            <span class="detail-content">{{ event_title }}</span>
+        </div>
+        
+        <div class="event-detail">
+            <svg class="detail-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="detail-label">Date:</span>
+            <span class="detail-content">{{ month }}/{{ date }}/{{ year }}</span>
+        </div>
+
+        <div class="event-detail">
+            <svg class="detail-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="detail-label">Time:</span>
+            <span class="detail-content">{{ time_unparsed }}</span>
+        </div>
+
+        <div class="event-detail">
+            <svg class="detail-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="detail-label">Where:</span>
+            <span class="detail-content">{{ location }}</span>
+        </div>
+
+        <div class="event-detail">
+            <svg class="detail-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+            </svg>
+            <span class="detail-label">With:</span>
+            <span class="detail-content">{{ other_person_email }}</span>
+        </div>
+
+        {% if other_info and other_info.strip() %}
+        <div class="event-details">
+            <div class="details-title">Additional Details</div>
+            <div class="details-content">{{ other_info }}</div>
+        </div>
+        {% endif %}
     </div>
 
     <div id="form_div2">

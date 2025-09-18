@@ -93,7 +93,6 @@ h3 {
     }
 }
 
-
 #form_div {
     display: flex;
     flex-direction: column;
@@ -137,24 +136,118 @@ h3 {
     font-size: 1.2em;
 }
 
+/* Enhanced Event Card Styles */
 .event-card {
-    background-color: #274156;   /* white card */
+    background: linear-gradient(135deg, #274156 0%, #1e3540 100%);
     color: white;
-    border-radius: 2vw;
+    border-radius: 20px;
     margin: auto;
     margin-top: 5vh;
-    padding-top: 1vh;
-    padding-bottom: 1vh;
-    width: 22vw;
-    height: 40vh;
-    box-shadow: 0px 1vh 2vh rgba(0,0,0,0.2);
-    text-align: left; /* better readability for details */
+    padding: 24px;
+    width: min(400px, 90vw);
+    min-height: auto;
+    box-shadow: 
+        0 20px 40px rgba(0,0,0,0.3),
+        0 0 0 1px rgba(255,255,255,0.1);
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
 }
 
-.event-card p {
-    margin: 1vh 0;
-    font-size: 1.2em;
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 30px 60px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.15);
+}
+
+.event-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1C6E8C, #4ecdc4, #45b7d1, #96ceb4);
+    border-radius: 20px 20px 0 0;
+}
+
+.event-type {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #1C6E8C;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.event-title {
+    font-size: 2.2em;
+    font-weight: 700;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #ffffff, #D0CCD0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+}
+
+.event-detail {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
+    font-size: 1.1em;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+}
+
+.event-detail:hover {
+    color: #1C6E8C;
+}
+
+.detail-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    opacity: 0.8;
+    flex-shrink: 0;
+    fill: currentColor;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #a8b8c8;
+    min-width: 80px;
+}
+
+.detail-content {
     color: white;
+    font-weight: 500;
+}
+
+.event-details {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 16px;
+    backdrop-filter: blur(10px);
+}
+
+.details-title {
+    font-weight: 600;
+    color: #1C6E8C;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.details-content {
+    color: #D0CCD0;
+    line-height: 1.4;
 }
 
 /* Labels */
@@ -296,4 +389,29 @@ label {
 #form_div {
     text-align: center;
     margin-top: 5vh;
+}
+
+/* Responsive Design for Event Cards */
+@media (max-width: 768px) {
+    .event-card {
+        padding: 24px;
+        min-height: auto;
+        width: min(350px, 95vw);
+    }
+    
+    .event-title {
+        font-size: 1.8em;
+    }
+    
+    .event-detail {
+        font-size: 1em;
+    }
+    
+    .detail-label {
+        min-width: 70px;
+    }
+    
+    .event-type {
+        font-size: 1em;
+    }
 }
