@@ -156,18 +156,33 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
 
 
 def get_llm_response(new_filename):
-   with open("static/py/apikey.txt", "r") as f:
-       api_key = f.read().strip()
+#    with open("static/py/apikey.txt", "r") as f:
+#        api_key = f.read().strip()
   
-   with open(new_filename, "r") as f:
+#    with open(new_filename, "r") as f:
+#        prompt = f.read()
+  
+#    client = genai.Client(api_key=api_key)
+
+
+#    response = client.models.generate_content(
+#        model="gemini-2.5-flash",
+#        contents=prompt
+#    )
+#    return (response.text)
+    with open("static/py/openaikey.txt","r") as f:
+        api_key = f.read().strip()
+
+    with open(new_filename, "r") as f:
        prompt = f.read()
-  
-   client = genai.Client(api_key=api_key)
-   response = client.models.generate_content(
-       model="gemini-2.5-flash",
-       contents=prompt
-   )
-   return (response.text)
+    client = OpenAI(api_key=api_key)
+    response = client.responses.create(
+        model="gpt-4o-mini", 
+        input = prompt
+        
+    )
+    return response.output_text
+
 
 
    # print(f"API Key loaded: {api_key[:5]}...") 
