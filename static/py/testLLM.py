@@ -126,7 +126,7 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
         
         f.write("- A time is FREE only if the ENTIRE meeting interval is free for ALL attendees.\n")
         f.write("- The interval is treated as [start, end) in America/New_York; no overlap is allowed at the END. Calculate the end time of the event you have planned to make sure that this end time does not conflict with any other events in anyone's calendar.\n")
-        f.write("- Additionally, enforce a 15-minute buffer BEFORE the start and AFTER the end across all attendees.\n")
+        #f.write("- Additionally, enforce a 15-minute buffer BEFORE the start and AFTER the end across all attendees.\n")
         f.write("- Prefer the EARLIEST valid time.\n")
         f.write("- Prefer reasonable hours (08:00–22:00 America/New_York) unless no other option exists.\n")
         f.write("- Use America/New_York for reasoning; include timezone offset in output if present.\n")
@@ -159,31 +159,31 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
 def get_llm_response(new_filename):
 #    with open("static/py/apikey.txt", "r") as f:
 #        api_key = f.read().strip()
-  
-#    with open(new_filename, "r") as f:
-#        prompt = f.read()
-  
-#    client = genai.Client(api_key=api_key)
-
-
-#    response = client.models.generate_content(
-#        model="gemini-2.5-flash",
-#        contents=prompt
-#    )
-#    return (response.text)
-    openai_api_key = os.environ.get("OPENAI_API_KEY")
-    # with open("static/py/openaikey.txt","r") as f:
-    #     api_key = f.read().strip()
-
-    with open(new_filename, "r") as f:
+   api_key = os.environ.get("GEMINI_API_KEY")
+   with open(new_filename, "r") as f:
        prompt = f.read()
-    client = OpenAI(api_key=openai_api_key)
-    response = client.responses.create(
-        model="gpt-4o-mini", 
-        input = prompt
+  
+   client = genai.Client(api_key=api_key)
+
+
+   response = client.models.generate_content(
+       model="gemini-2.5-flash",
+       contents=prompt
+   )
+   return (response.text)
+    # openai_api_key = os.environ.get("OPENAI_API_KEY")
+    # # with open("static/py/openaikey.txt","r") as f:
+    # #     api_key = f.read().strip()
+
+    # with open(new_filename, "r") as f:
+    #    prompt = f.read()
+    # client = OpenAI(api_key=openai_api_key)
+    # response = client.responses.create(
+    #     model="gpt-4o-mini", 
+    #     input = prompt
         
-    )
-    return response.output_text
+    # )
+    # return response.output_text
 
 
 

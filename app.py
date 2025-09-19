@@ -182,6 +182,7 @@ def runLLM():
            t3 = time.perf_counter()
            print(f"TIMING runLLM: get_llm_response (Gemini) took {(t3 - t2):.3f} s")
            if "UNAVAILABLE" in llm_response:
+               print("unavailable!!!!!!")
                return render_template("results.html", error="No time available!")
            t4 = time.perf_counter()
            llm_response_dict = parse_llm_output(llm_response)
