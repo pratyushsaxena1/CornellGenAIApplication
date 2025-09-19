@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, session, redirect, url_for
+from dotenv import load_dotenv
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
@@ -22,7 +23,9 @@ from testLLM import write_llm_prompt, get_llm_response
 
 
 app = Flask(__name__)
-app.secret_key = 'mol_and_prat_goat'
+app.secret_key = os.environ.get("FLASK_SECRET_KEY")
+
+load_dotenv()
 
 
 SCOPES = [
@@ -32,10 +35,14 @@ SCOPES = [
    'https://www.googleapis.com/auth/calendar.readonly',
    'https://www.googleapis.com/auth/calendar.events'
 ]
+google_creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+if not google_creds_json:
+    raise ValueError("GOOGLE_CREDENTIALS_JSON environment variable not set.")
 
 
-GOOGLE_CLIENT_SECRETS_FILE = os.path.join(pathlib.Path(__file__).parent, "credentials.json")
+#GOOGLE_CLIENT_SECRETS_FILE = os.path.join(pathlib.Path(__file__).parent, "credentials.json")
 
+GOOGLE_CLIENT_CONFIG = json.loads(google_creds_json)
 
 
 
@@ -279,8 +286,8 @@ def test_results():
 
 @app.route('/connect_google')
 def connect_google():
-   flow = Flow.from_client_secrets_file(
-       GOOGLE_CLIENT_SECRETS_FILE,
+   flow = Flow.from_client_config(
+       GOOGLE_CLIENT_CONFIG,
        scopes=SCOPES,
        redirect_uri=url_for('oauth2callback', _external=True)
    )
@@ -299,8 +306,8 @@ def connect_google():
 def oauth2callback():
    t0 = time.perf_counter()
    state = session['state']
-   flow = Flow.from_client_secrets_file(
-       GOOGLE_CLIENT_SECRETS_FILE,
+   flow = Flow.from_client_config(
+       GOOGLE_CLIENT_CONFIG,
        scopes=SCOPES,
        state=state,
        redirect_uri=url_for('oauth2callback', _external=True)
