@@ -39,10 +39,15 @@ google_creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
 if not google_creds_json:
     raise ValueError("GOOGLE_CREDENTIALS_JSON environment variable not set.")
 
+#full_config = json.loads(google_creds_json)
+
+
+
+
+GOOGLE_CLIENT_CONFIG = json.loads(google_creds_json)
 
 #GOOGLE_CLIENT_SECRETS_FILE = os.path.join(pathlib.Path(__file__).parent, "credentials.json")
 
-GOOGLE_CLIENT_CONFIG = json.loads(google_creds_json)
 
 
 
