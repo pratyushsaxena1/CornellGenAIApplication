@@ -275,21 +275,6 @@ def results():
    return render_template("results.html", **session['last_event'])
 
 
-@app.route('/test_results')
-def test_results():
-   return render_template(
-       "results.html",
-       event_title="Demo Meeting",
-       month=9,
-       date=15,
-       year=2025,
-       time_unparsed="3:00 PM",
-       location="Library",
-       other_person_email="friend@example.com",
-       other_info="Bring your laptop"
-   )
-
-
 @app.route('/connect_google')
 def connect_google():
    flow = Flow.from_client_config(
