@@ -75,13 +75,13 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
 
 
     #api_key = f.read().strip()
-    timePdPrompt = f"The time period is {time_period}. The current time is {current_datetime_edt} . I want you to return the time period in number of hours. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ONLY return a single number, no other text like \'Here is the number of hours\'.\nRemember, this is the real time period: {time_period}. You must ONLY return an int."
-    client = genai.Client(api_key=gemini_api_key)
-    timePdResponse = client.models.generate_content(
-    model="gemini-2.5-flash", contents=timePdPrompt
-    )
-    timePdResponse = int(timePdResponse.text)
-    print(timePdResponse)
+    # timePdPrompt = f"The time period is {time_period}. The current time is {current_datetime_edt} . I want you to return the time period in number of hours. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ONLY return a single number, no other text like \'Here is the number of hours\'.\nRemember, this is the real time period: {time_period}. You must ONLY return an int."
+    # client = genai.Client(api_key=gemini_api_key)
+    # timePdResponse = client.models.generate_content(
+    # model="gemini-2.5-flash", contents=timePdPrompt
+    # )
+    # timePdResponse = int(timePdResponse.text)
+    # print(timePdResponse)
 
     current_time_nanoseconds = get_current_time_nanoseconds()
     source_file = "static/py/promptfile.txt"
@@ -119,8 +119,9 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
         f.write("\n\n")
         
         f.write("CONSTRAINTS AND DECISION RULES:\n")
-        f.write("- Search ONLY within the next N hours from now (N defined below).\n")
-        f.write(f"- N (hours from now): {timePdResponse}\n")
+        f.write("- Search ONLY within the time period above.\n")
+        # f.write("- Search ONLY within the next N hours from now (N defined below).\n")
+        # f.write(f"- N (hours from now): {timePdResponse}\n")
         f.write("- Meeting must fully fit within this window and last exactly the requested duration.\n")
         
         f.write("- A time is FREE only if the ENTIRE meeting interval is free for ALL attendees.\n")
@@ -143,7 +144,8 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
         current_datetime_edt = str(datetime.datetime.now(pytz.timezone('America/New_York')))
         if "." in current_datetime_edt:
             current_datetime_edt = str(current_datetime_edt).split(".")[0]
-        f.write(f"\n\nThe current time is {current_datetime_edt}. Only consider times within the next {timePdResponse} hours from now, not beyond.\n")
+        #f.write(f"\n\nThe current time is {current_datetime_edt}. Only consider times within the next {timePdResponse} hours from now, not beyond.\n")
+        f.write(f"\n\nThe current time is {current_datetime_edt}. Only consider times within the time period, not beyond.\n")
 
         f.close()
 
@@ -179,7 +181,7 @@ def get_llm_response(new_filename):
        prompt = f.read()
     client = OpenAI(api_key=openai_api_key)
     response = client.responses.create(
-        model="gpt-5-nano", 
+        model="gpt-5-mini", 
         input = prompt
         
     )
