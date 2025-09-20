@@ -71,16 +71,23 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
     #with open("static/py/apikey.txt", "r") as f:
     current_datetime_edt = datetime.datetime.now(pytz.timezone('America/New_York'))
 
-
-
+    openai_api_key = os.environ.get("OPENAI_API_KEY")
+    
 
     #api_key = f.read().strip()
     timePdPrompt = f"The time period is {time_period}. The current time is {current_datetime_edt} . I want you to return the time period in number of hours. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ONLY return a single number, no other text like \'Here is the number of hours\'.\nRemember, this is the real time period: {time_period}. You must ONLY return an int."
     client = genai.Client(api_key=gemini_api_key)
-    timePdResponse = client.models.generate_content(
-    model="gemini-2.5-flash", contents=timePdPrompt
+
+    client = OpenAI(api_key=openai_api_key)
+    timePdResponse = client.responses.create(
+        model="gpt-5-chat-latest", 
+        input = timePdPrompt
+        
     )
-    timePdResponse = int(timePdResponse.text)
+    # timePdResponse = client.models.generate_content(
+    # model="gemini-2.5-flash", contents=timePdPrompt
+    # )
+    timePdResponse = timePdResponse.output_text
     print(timePdResponse)
 
     current_time_nanoseconds = get_current_time_nanoseconds()
