@@ -181,7 +181,7 @@ def get_llm_response(new_filename):
        prompt = f.read()
     client = OpenAI(api_key=openai_api_key)
     response = client.responses.create(
-        model="gpt-5-mini", 
+        model="gpt-5-chat-latest", 
         input = prompt
         
     )
