@@ -6,6 +6,27 @@
     <link rel="stylesheet" href="/static/css/homepage_style.css">
 </head>
 <body>
+    {% if unavailable or error %}
+    <h3>No available time found.</h3>
+    <div class="event-card">
+        <div class="event-detail">
+            <span class="detail-content">
+                {% if error %}
+                    {{ error }}
+                {% else %}
+                    We couldn't find a free slot for all attendees in the given time period. Please try a different time or duration.
+                {% endif %}
+            </span>
+        </div>
+    </div>
+    <div id="form_div2">
+        <div class="buttons2">
+            <a href="{{ url_for('form') }}">
+                <button type="button">Try Again</button>
+            </a>
+        </div>
+    </div>
+    {% else %}
     <h3>Your event has been created.</h3>
     
     <!-- Enhanced event card with proper structure -->
@@ -69,5 +90,6 @@
             </a>
         </div>
     </div>
+    {% endif %}
 </body>
 </html>
