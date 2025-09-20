@@ -1,3 +1,3 @@
 # Creavent
 
-Submitted as an application to Cornell University's Generative AI Club.
+Submitted as an application to Cornell University's Generative AI Club. Project Demo: www/youtube.com
