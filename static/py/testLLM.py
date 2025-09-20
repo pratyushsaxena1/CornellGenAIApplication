@@ -68,13 +68,13 @@ def write_llm_prompt( thing_to_do, person_to_meet_with, time_period, duration, l
   
     gemini_api_key = os.environ.get('GEMINI_API_KEY')
    #google gemini first call to get the time period so we can give it to google calendar
-   #with open("static/py/apikey.txt", "r") as f:
+    #with open("static/py/apikey.txt", "r") as f:
     current_datetime_edt = datetime.datetime.now(pytz.timezone('America/New_York'))
 
 
 
 
-    api_key = f.read().strip()
+    #api_key = f.read().strip()
     timePdPrompt = f"The time period is {time_period}. The current time is {current_datetime_edt} . I want you to return the time period in number of hours. If the user says something like \'Today\' then the time period that you return should be the INTEGER number of hours from now until the end of the day. ONLY return a single number, no other text like \'Here is the number of hours\'.\nRemember, this is the real time period: {time_period}. You must ONLY return an int."
     client = genai.Client(api_key=gemini_api_key)
     timePdResponse = client.models.generate_content(
