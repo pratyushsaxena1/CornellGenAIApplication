@@ -2,7 +2,7 @@
 
 Submitted as an application to Cornell University's Generative AI Club. 
 
-* Project Demo: https://www.youtube.com
+* Project Demo: https://youtu.be/IHLDrmMur6E
 * Project Website: https://creavent.onrender.com/
 
 Creavent is a personalized meeting scheduler that examines the Google Calendars of the user, along with the people the user would like to meet with, and creates a Google Calendar event on behalf of the user. This can save time and back-and-forth communication between people for scheduling, automating the scheduling process and finding a time that works for everyone.
